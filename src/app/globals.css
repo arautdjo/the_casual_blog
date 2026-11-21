@@ -1,0 +1,254 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+/* ------------------------------------------------------------------ */
+/*  Design tokens — "Pop Playground"                                  */
+/*  Claro por padrão, escuro automático via prefers-color-scheme.     */
+/* ------------------------------------------------------------------ */
+:root {
+  --canvas: #fff6e6;
+  --surface: #ffffff;
+  --surface-soft: #ffeccb;
+  --ink: #1c1633;
+  --muted: #6a6285;
+  --line: #1c1633;
+  --shadow: #1c1633;
+  --link: #5b36f2;
+
+  --brand: #6d4aff;
+  --brand-ink: #ffffff;
+  --pop: #ff5d7a;
+  --sun: #ffc93c;
+  --mint: #25d9a0;
+  --sky: #45c7f5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #130f24;
+    --surface: #1e1836;
+    --surface-soft: #2b2350;
+    --ink: #f5f1ff;
+    --muted: #a99fc9;
+    --line: #4b3f86;
+    --shadow: #07040f;
+    --link: #b3a2ff;
+  }
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-link: var(--link);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-pop: var(--pop);
+  --color-sun: var(--sun);
+  --color-mint: var(--mint);
+  --color-sky: var(--sky);
+
+  --font-display: var(--next-font-display), ui-rounded, system-ui, sans-serif;
+  --font-sans: var(--next-font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Base                                                              */
+/* ------------------------------------------------------------------ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light dark;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    background-color: var(--canvas);
+    /* grade de pontinhos + dois "glows" de cor bem suaves */
+    background-image:
+      radial-gradient(
+        60rem 30rem at 85% -10%,
+        color-mix(in oklab, var(--brand) 18%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        50rem 28rem at -10% 20%,
+        color-mix(in oklab, var(--pop) 14%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        color-mix(in oklab, var(--ink) 14%, transparent) 1px,
+        transparent 1px
+      );
+    background-size:
+      auto,
+      auto,
+      22px 22px;
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--sun);
+    color: #1c1633;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--brand);
+    outline-offset: 3px;
+    border-radius: 0.5rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Componentes reutilizáveis                                         */
+/*  (ficam em @layer components para as utilities do Tailwind ainda   */
+/*   conseguirem sobrescrever, ex.: `rounded-full`)                   */
+/* ------------------------------------------------------------------ */
+@layer components {
+  /* Superfície estilo "adesivo": borda marcada + sombra deslocada */
+  .sticker {
+    background: var(--surface);
+    border: 2px solid var(--line);
+    border-radius: 1.5rem;
+    box-shadow: 4px 4px 0 var(--shadow);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .sticker-lift:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--shadow);
+  }
+
+  /* Markdown dos posts, usando os tokens acima (já funciona no escuro) */
+  .prose-pop {
+    --tw-prose-body: var(--ink);
+    --tw-prose-headings: var(--ink);
+    --tw-prose-lead: var(--muted);
+    --tw-prose-links: var(--link);
+    --tw-prose-bold: var(--ink);
+    --tw-prose-counters: var(--muted);
+    --tw-prose-bullets: var(--pop);
+    --tw-prose-hr: var(--line);
+    --tw-prose-quotes: var(--ink);
+    --tw-prose-quote-borders: var(--sun);
+    --tw-prose-captions: var(--muted);
+    --tw-prose-code: var(--ink);
+    --tw-prose-pre-code: #f5f1ff;
+    --tw-prose-pre-bg: #1c1633;
+    --tw-prose-th-borders: var(--line);
+    --tw-prose-td-borders: color-mix(in oklab, var(--line) 35%, transparent);
+  }
+
+  .prose-pop :where(pre):not(:where([class~='not-prose'] *)) {
+    border: 2px solid var(--line);
+    border-radius: 1rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Animações (poucas, curtas e respeitando prefers-reduced-motion)   */
+/* ------------------------------------------------------------------ */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  30% {
+    rotate: -12deg;
+  }
+  70% {
+    rotate: 10deg;
+  }
+}
+
+@keyframes dot-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  40% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
+/* entrada dos cards; use style={{ '--i': index }} para escalonar */
+.reveal {
+  animation: reveal 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+.pop-in {
+  animation: pop-in 0.2s ease-out both;
+}
+
+.logo:hover .logo-badge {
+  animation: wiggle 0.5s ease;
+}
+
+.loader-dot {
+  animation: dot-bounce 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  react-toastify no mesmo estilo                                    */
+/* ------------------------------------------------------------------ */
+.Toastify__toast {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--ink) !important;
+  background: var(--surface) !important;
+  border: 2px solid var(--line);
+  border-radius: 1rem !important;
+  box-shadow: 4px 4px 0 var(--shadow) !important;
+}
+
+.Toastify__close-button {
+  color: var(--ink) !important;
+}
